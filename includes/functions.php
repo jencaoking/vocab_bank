@@ -65,7 +65,7 @@ function addWord($data, $examples, $synonyms) {
         $pdo->beginTransaction();
 
         $stmt = $pdo->prepare("INSERT INTO words (word, phonetic, part_of_speech, meaning_cn, meaning_en, topic, created_at, updated_at)
-                               VALUES (:word, :phonetic, :pos, :mean_cn, :mean_en, :topic, datetime('now','localtime'), datetime('now','localtime'))");
+                               VALUES (:word, :phonetic, :pos, :mean_cn, :mean_en, :topic, NOW(), NOW())");
         $stmt->execute([
             'word' => $data['word'],
             'phonetic' => $data['phonetic'],
@@ -114,7 +114,14 @@ function addWord($data, $examples, $synonyms) {
 function getTodayReviewCount() {
     global $pdo;
     $today = date('Y-m-d');
-    $stmt = $pdo->prepare("SELECT COUNT(DISTINCT word_id) FROM review_logs WHERE next_review_date <= :today");
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) FROM words w
+        WHERE w.id NOT IN (
+            SELECT word_id FROM review_logs
+            GROUP BY word_id
+            HAVING MAX(next_review_date) > :today
+        )
+    ");
     $stmt->execute(['today' => $today]);
     return $stmt->fetchColumn();
 }
@@ -126,9 +133,12 @@ function getTodayReviewWords() {
     global $pdo;
     $today = date('Y-m-d');
     $stmt = $pdo->prepare("
-        SELECT DISTINCT w.* FROM words w
-        JOIN review_logs r ON w.id = r.word_id
-        WHERE r.next_review_date <= :today
+        SELECT w.* FROM words w
+        WHERE w.id NOT IN (
+            SELECT word_id FROM review_logs
+            GROUP BY word_id
+            HAVING MAX(next_review_date) > :today
+        )
         ORDER BY w.word ASC
     ");
     $stmt->execute(['today' => $today]);

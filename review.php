@@ -6,9 +6,8 @@ $words = getTodayReviewWords();
 
 $current = null;
 if (!empty($words)) {
-    // 如果没有传参，默认取第一个
-    $index = $_GET['index'] ?? 0;
-    $current = $words[$index] ?? null;
+    // 始终取第一个（动态消费队列）
+    $current = $words[0];
     $total = count($words);
 } else {
     $total = 0;
@@ -17,13 +16,8 @@ if (!empty($words)) {
 // 处理评分提交
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['word_id'], $_POST['quality'])) {
     addReviewLog($_POST['word_id'], (int)$_POST['quality']);
-    // 跳转到下一个（index +1）
-    $next = ((int)($_POST['index'] ?? 0)) + 1;
-    if ($next >= $total) {
-        header('Location: review.php?done=1');
-    } else {
-        header("Location: review.php?index=$next");
-    }
+    // 重新加载页面，始终取新的 $words[0]
+    header('Location: review.php');
     exit;
 }
 ?>
@@ -63,14 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['word_id'], $_POST['qu
 
         <form method="post" style="text-align: center; margin-top: 30px;">
             <input type="hidden" name="word_id" value="<?= $current['id'] ?>">
-            <input type="hidden" name="index" value="<?= $index ?>">
             <p>你记得怎么样？</p>
             <?php foreach ([0,1,2,3,4,5] as $q): ?>
                 <button type="submit" name="quality" value="<?= $q ?>"><?= $q ?></button>
             <?php endforeach; ?>
             <p><small>(0=完全忘了，5=非常熟练)</small></p>
         </form>
-        <p style="text-align: center;">第 <?= $index+1 ?> / <?= $total ?> 个</p>
+        <p style="text-align: center;">剩余 <?= $total ?> 个</p>
     <?php else: ?>
         <div class="card">今天没有需要复习的单词。</div>
     <?php endif; ?>
