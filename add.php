@@ -4,7 +4,6 @@ require_once 'includes/functions.php';
 
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 整理例句数组
     $examples = [];
     if (isset($_POST['examples']['sentence'])) {
         foreach ($_POST['examples']['sentence'] as $i => $sent) {
@@ -14,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
         }
     }
-    // 整理同义词数组
     $synonyms = [];
     if (isset($_POST['synonyms']['synonym'])) {
         foreach ($_POST['synonyms']['synonym'] as $i => $syn) {
@@ -27,16 +25,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $result = addWord($_POST, $examples, $synonyms);
     if ($result) {
-        $message = '<p class="success">单词添加成功！</p>';
+        header('Location: add.php?success=1');
+        exit;
     } else {
         $message = '<p class="error">添加失败，可能单词已存在。</p>';
     }
+}
+
+if (isset($_GET['success'])) {
+    $message = '<p class="success">单词添加成功！</p>';
 }
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>添加单词</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/main.js"></script>

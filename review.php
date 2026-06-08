@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['word_id'], $_POST['qu
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>复习</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -39,10 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['word_id'], $_POST['qu
 
     <h1>今日复习</h1>
 
-    <?php if (isset($_GET['done'])): ?>
-        <div class="card success">今日复习完成！</div>
-        <a href="index.php">返回首页</a>
-    <?php elseif ($current): ?>
+    <?php if ($current): ?>
         <div class="card" style="font-size: 2em; text-align: center;">
             <?= htmlspecialchars($current['word']) ?>
         </div>

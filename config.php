@@ -1,6 +1,7 @@
 <?php
 // config.php
 session_start();
+date_default_timezone_set('Asia/Shanghai');
 
 // MySQL 数据库配置
 $db_host = 'mysql6.sqlpub.com';

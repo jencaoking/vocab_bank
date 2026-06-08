@@ -151,18 +151,19 @@ function getTodayReviewWords() {
 function addReviewLog($word_id, $quality) {
     global $pdo;
     $today = date('Y-m-d');
-    // 简单间隔：质量>=4则间隔逐步增长，否则明天再复习
+    
     if ($quality >= 4) {
-        $last_log = $pdo->prepare("SELECT next_review_date FROM review_logs WHERE word_id = :wid ORDER BY id DESC LIMIT 1");
+        $last_log = $pdo->prepare("SELECT review_date FROM review_logs WHERE word_id = :wid ORDER BY id DESC LIMIT 1");
         $last_log->execute(['wid' => $word_id]);
-        $last_date = $last_log->fetchColumn();
-        if ($last_date) {
-            $last_ts = strtotime($last_date);
-            $interval = max(1, round((time() - $last_ts) / 86400) * 2.5);
+        $last_review_date = $last_log->fetchColumn();
+        
+        if ($last_review_date) {
+            $actual_days = max(1, round((time() - strtotime($last_review_date)) / 86400));
+            $interval = round($actual_days * 2.5);
         } else {
             $interval = 1;
         }
-        $next_date = date('Y-m-d', strtotime("+{$interval} day"));
+        $next_date = date('Y-m-d', strtotime("+{$interval} days"));
     } else {
         $next_date = date('Y-m-d', strtotime("+1 day"));
     }
