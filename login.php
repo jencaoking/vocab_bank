@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require_once 'config.php';
 
 $error = '';
@@ -6,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pass = $_POST['password'] ?? '';
     if (password_verify($pass, ADMIN_PASSWORD_HASH)) {
         $_SESSION['logged_in'] = true;
+        ob_clean();
         header('Location: index.php');
         exit;
     } else {

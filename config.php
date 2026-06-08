@@ -22,4 +22,4 @@ define('BASE_URL', '/');
 
 // 管理员密码（DEMO 用，实际使用请修改）
 // 这里是 'admin123' 的哈希值，登录时用 password_verify 验证
-define('ADMIN_PASSWORD_HASH', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+define('ADMIN_PASSWORD_HASH', '$2y$12$YzPgI/40KMTnwPhSRy7AzuZgEHpKprH9BkGWw75HFx1v9oXXI4iha');
