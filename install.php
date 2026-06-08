@@ -5,7 +5,7 @@ try {
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS words (
             id INT PRIMARY KEY AUTO_INCREMENT,
-            word TEXT NOT NULL UNIQUE,
+            word VARCHAR(255) NOT NULL UNIQUE,
             phonetic TEXT,
             part_of_speech TEXT,
             meaning_cn TEXT NOT NULL,
